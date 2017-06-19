@@ -286,13 +286,18 @@ def plot_timeline(peak_vals, tweet_kw, resolution = 1000):
     Plot timeline along with keywords.
     """
     plt.figure()
+    text_alignment = {1: 'right', 0: 'left'}
     for i, kw in enumerate(tweet_kw):
-        plt.plot([i, i], [0, peak_vals[i] * (-1) ** i], c = 'blue')
-        plt.scatter(i, peak_vals[i] * (-1) ** i, c = 'red')
-        plt.text(i, peak_vals[i] * (-1) ** i * 1.1, kw, fontdict={'size': 8})
-    plt.plot([-1, i + 1], [0, 0], c = 'black')
+        plt.plot([0, peak_vals[i] * (-1) ** i], [- 2 * i, - 2 * i], c='blue')
+        plt.scatter(peak_vals[i] * (-1) ** i, - 2 * i, c='red')
+        plt.text(peak_vals[i] * (-1) ** i / 2, - 2 * i + 1, kw, fontdict={'size': 12},
+                 horizontalalignment=text_alignment[i % 2])
+    plt.plot([0, 0], [- 2 * i - 1, 1], c='black')
     plt.xticks([])
     plt.yticks([])
+    plt.arrow(0, 1, 0, - 2 * i, shape='full', lw=2,
+              length_includes_head=False, head_width=8, head_length=3.8)
+    plt.axis('tight')
 
     file_name = 'timeline.png'
     plotfile = '/Users/xiaoxiao/Documents/GitHub/insight/flaskapp/flaskexample/static/' + file_name
