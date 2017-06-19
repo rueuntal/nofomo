@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import re
 import textrank
 import time
+import matplotlib.dates as mdates
 import os
 
 def tweet_to_db(searchQuery, start, end, tweetsPerQry=100, maxTweets=100000000,
@@ -295,7 +296,7 @@ def plot_timeline(peak_vals, tweet_kw, resolution = 1000):
     plt.plot([0, 0], [- 2 * i - 1, 1], c='black')
     plt.xticks([])
     plt.yticks([])
-    plt.arrow(0, 1, 0, - 2 * i, shape='full', lw=2,
+    plt.arrow(0, 1, 0, - 2 * i, shape='full', lw=2, color = 'black',
               length_includes_head=False, head_width=8, head_length=3.8)
     plt.axis('tight')
 
@@ -310,6 +311,14 @@ def plot_Ntweets(tweet_count, peak_time, peak_vals, resolution = 500):
     """
     plt.figure()
     plt.plot(tweet_count['time'], tweet_count['count'])
+    plt.xlabel('Time', fontsize=16)
+    plt.ylabel('Tweets per minute', fontsize=16)
+    plt.tick_params(axis='both', labelsize=12)
+    x0 = mdates.date2num(min(tweet_count['time']))
+    x1 = mdates.date2num(max(tweet_count['time']))
+    plt.arrow(x0, 0, x1 - x0, 0, shape='full', lw=2, color='black',
+              length_includes_head=False, head_width=4, head_length=0.01)
+
     plt.scatter(peak_time, peak_vals, c = 'red')
     file_name = 'Ntweets.png'
     plotfile = '/Users/xiaoxiao/Documents/GitHub/insight/flaskapp/flaskexample/static/' + file_name
