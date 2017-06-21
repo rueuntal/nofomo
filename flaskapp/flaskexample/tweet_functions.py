@@ -9,6 +9,7 @@ import datetime
 import time
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import re
 import textrank
 import time
@@ -286,12 +287,14 @@ def plot_timeline(peak_vals, tweet_kw, resolution = 1000):
     """
     Plot timeline along with keywords.
     """
+    sns.set_style("white")
+    mpl.rcParams['axes.linewidth'] = 0
     plt.figure()
     text_alignment = {1: 'right', 0: 'left'}
     for i, kw in enumerate(tweet_kw):
         plt.plot([0, peak_vals[i] * (-1) ** i], [- 2 * i, - 2 * i], c='blue')
         plt.scatter(peak_vals[i] * (-1) ** i, - 2 * i, c='red')
-        plt.text(peak_vals[i] * (-1) ** i / 2, - 2 * i + 1, kw, fontdict={'size': 12},
+        plt.text(peak_vals[i] * (-1) ** i * 0.2, - 2 * i + 1, kw, fontdict={'size': 14},
                  horizontalalignment=text_alignment[i % 2])
     plt.plot([0, 0], [- 2 * i - 1, 1], c='black')
     plt.xticks([])
@@ -301,7 +304,7 @@ def plot_timeline(peak_vals, tweet_kw, resolution = 1000):
     plt.axis('tight')
 
     file_name = 'timeline.png'
-    plotfile = '/Users/xiaoxiao/Documents/GitHub/insight/flaskapp/flaskexample/static/' + file_name
+    plotfile = '/Users/xiaoxiao/Documents/GitHub/nofomo/flaskapp/flaskexample/static/' + file_name
     plt.savefig(plotfile)
     return '../static/' + file_name
 
@@ -321,7 +324,7 @@ def plot_Ntweets(tweet_count, peak_time, peak_vals, resolution = 500):
 
     plt.scatter(peak_time, peak_vals, c = 'red')
     file_name = 'Ntweets.png'
-    plotfile = '/Users/xiaoxiao/Documents/GitHub/insight/flaskapp/flaskexample/static/' + file_name
+    plotfile = '/Users/xiaoxiao/Documents/GitHub/nofomo/flaskapp/flaskexample/static/' + file_name
     plt.savefig(plotfile)
     return '../static/' + file_name
 

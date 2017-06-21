@@ -24,4 +24,5 @@ def whats_missed_output():
   tweet_count, peak_time, peak_vals, tweet_kw = tweet.overall_analysis(hashtag, start_time, end_time)
   ntweet_plot = tweet.plot_Ntweets(tweet_count, peak_time, peak_vals)
   timeline_plot = tweet.plot_timeline(peak_vals, tweet_kw)
-  return render_template("whats_missed_output.html", ntweet_plot = ntweet_plot, timeline_plot = timeline_plot)
+  return render_template("whats_missed_output.html", hashtag = hashtag, ntweet_plot = ntweet_plot,
+                         timeline_plot = timeline_plot)

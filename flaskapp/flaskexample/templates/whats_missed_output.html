@@ -40,7 +40,9 @@
 <br><br>
  <div class="container">
     <div class="starter-template">
-        <h2>What Did I Miss?</h2>
+        <h2><span style = "color: #c70039">No</span>
+            FOMO</h2>
+            <h3>Twitter Timeline for {{ hashtag }}</h3>
     </div>
 
 
@@ -51,8 +53,9 @@
 
     <div class="container">
       <div class="starter-template">
-        <h3>Tweet stream through time</h3>
-          <img src={{ ntweet_plot }} width="500">
+          <img src={{ ntweet_plot }} style="float: left; width: 40%; margin-right: 1%; margin-bottom: 0.5em;">
+          <img src={{ timeline_plot }} style="float: left; width: 58%; margin-right: 1%; margin-bottom: 0.5em;">
+          <p style="clear: both;">
       </div>
     </div>
 
@@ -60,10 +63,6 @@
      </div><!-- /.container -->
 
     <div class="container">
-      <div class="starter-template">
-        <h3>Tweety timeline</h3>
-        <img src={{ timeline_plot }} width="500">
-      </div>
 
 
       <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
