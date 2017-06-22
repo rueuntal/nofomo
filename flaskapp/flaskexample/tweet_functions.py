@@ -330,7 +330,7 @@ def plot_Ntweets(tweet_count, peak_time, peak_vals, resolution = 500):
     return '../static/' + file_name
 
 # Obtain keys
-with open('../../../twitter_oauth.txt') as oauth:
+with open('../../../../../twitter_oauth.txt') as oauth:
     keys =  oauth.readlines()
 consumer_key, consumer_secret, access_token = [x.strip() for x in keys]
 
