@@ -330,12 +330,12 @@ def plot_Ntweets(tweet_count, peak_time, peak_vals, resolution = 500):
     return '../static/' + file_name
 
 # Obtain keys
-with open('/home/ubuntu/twitter_oauth.txt') as oauth:
-    keys =  oauth.readlines()
-consumer_key, consumer_secret, access_token = [x.strip() for x in keys]
+#with open('/home/ubuntu/twitter_oauth.txt') as oauth:
+#    keys =  oauth.readlines()
+#consumer_key, consumer_secret, access_token = [x.strip() for x in keys]
 
 # Replace the API_KEY and API_SECRET with your application's key and secret.
-auth = tweepy.AppAuthHandler(consumer_key, consumer_secret)
+#auth = tweepy.AppAuthHandler(consumer_key, consumer_secret)
 
-api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+#api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
