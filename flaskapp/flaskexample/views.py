@@ -4,7 +4,7 @@ from flask import request
 import datetime
 import tweet_functions as tweet
 
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__)
 
 @app.route('/')
 @app.route('/index')
