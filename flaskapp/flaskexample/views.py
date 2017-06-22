@@ -4,6 +4,7 @@ from flask import request
 import datetime
 import tweet_functions as tweet
 
+app = Flask(__name__)
 @app.route('/')
 @app.route('/index')
 def whats_missed_input():
