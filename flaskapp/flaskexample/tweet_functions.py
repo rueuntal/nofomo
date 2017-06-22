@@ -6,7 +6,6 @@ from sqlalchemy import create_engine
 from sqlalchemy_utils import database_exists, create_database
 import psycopg2
 import datetime
-import time
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -137,13 +136,16 @@ def group_tweets(tweet_pd, interval = datetime.timedelta(0, 1, 0)):
     """
     start_time = min(tweet_pd['datetime'])
     end_time = max(tweet_pd['datetime'])
-    duration = end_time - start_time
     tweet_pd['timegroup'] = np.floor((tweet_pd['datetime'] - start_time) / interval).astype(int)
     tweet_grouped = tweet_pd.groupby(['timegroup'])
     tweet_count = tweet_grouped['datetime'].aggregate(['count'])
     tweet_count.columns = ['count']
+    tweet_count = tweet_count.reindex(range(min(tweet_count.index.values), max(tweet_count.index.values) + 1),
+                                      fill_value=0)
     tweet_count['time'] = tweet_count.index.values * interval + start_time
     tweet_count['agg_tweets'] = tweet_grouped['content'].aggregate(lambda x: list(x))
+    for row in tweet_count.loc[tweet_count.agg_tweets.isnull(), 'agg_tweets'].index:
+        tweet_count.at[row, 'agg_tweets'] = []
     return tweet_count
 
 def peakdet(v, delta):
@@ -241,11 +243,7 @@ def get_peaks(tweet_count, delta=0.25):
         peak_groups.append(single_group)
         peak_tweets.append(tweet_group)
 
-    nonpeak_rows = [row for row in range(len(tweet_count)) if
-                    not any(row in sublist for sublist in peak_groups)]
-    nonpeak_tweets = [tweet_count.ix[row, 'agg_tweets'] for row in nonpeak_rows]
-    nonpeak_tweets = [' '.join(x) for x in nonpeak_tweets]
-    return [peak_vals, peak_time, peak_groups, peak_tweets, nonpeak_tweets]
+    return [peak_vals, peak_time, peak_groups, peak_tweets]
 
 def clean_tweet(tweet_string, hashtag):
     """
@@ -276,10 +274,12 @@ def overall_analysis(hashtag, start, end):
     Overarching function that carries out analysis.
 
     """
+    # First need to pull tweets into database
+    tweet_to_db(hashtag, start, end)
     dbname = hashtag.strip('#') + '_db'
     tweet_pd = tweets_db_to_pd(dbname, start, end)
     tweet_count = group_tweets(tweet_pd)
-    peak_vals, peak_time, peak_groups, peak_tweets, nonpeak_tweets = get_peaks(tweet_count)
+    peak_vals, peak_time, peak_groups, peak_tweets = get_peaks(tweet_count)
     tweet_kw = textrank_analysis(peak_tweets, orig_tag = hashtag)
     return tweet_count, peak_time, peak_vals, tweet_kw
 
@@ -312,6 +312,7 @@ def plot_Ntweets(tweet_count, peak_time, peak_vals, resolution = 500):
     """
     Plot the number of tweets through time.
     """
+    sns.set_style("darkgrid")
     plt.figure()
     plt.plot(tweet_count['time'], tweet_count['count'])
     plt.xlabel('Time', fontsize=16)
@@ -338,6 +339,3 @@ auth = tweepy.AppAuthHandler(consumer_key, consumer_secret)
 
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
-if (not api):
-    print ("Can't Authenticate")
-    sys.exit(-1)

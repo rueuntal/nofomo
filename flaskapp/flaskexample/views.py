@@ -11,6 +11,14 @@ import tweet_functions as tweet
 def whats_missed_input():
     return render_template("whats_missed_input.html")
 
+@app.route('/example_comeyday')
+def whats_missed_comey():
+    return render_template("whats_missed_comeyday.html")
+
+@app.route('/example_NBAFinals')
+def whats_missed_nbafinals():
+    return render_template("whats_missed_NBAFinals.html")
+
 @app.route('/output')
 def whats_missed_output():
   # Pull the three pieces of inputs
