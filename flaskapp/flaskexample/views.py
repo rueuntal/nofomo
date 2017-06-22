@@ -1,9 +1,10 @@
-from flask import render_template
+from flask import render_template, Flask
 from flaskexample import app
-import pandas as pd
 from flask import request
 import datetime
 import tweet_functions as tweet
+
+app = Flask(__name__, static_url_path='/static')
 
 @app.route('/')
 @app.route('/index')
