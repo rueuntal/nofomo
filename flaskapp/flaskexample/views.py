@@ -6,8 +6,7 @@ import datetime
 import tweet_functions as tweet
 
 @app.route('/')
-
-@app.route('/input')
+@app.route('/index')
 def whats_missed_input():
     return render_template("whats_missed_input.html")
 
