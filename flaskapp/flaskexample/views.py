@@ -24,7 +24,7 @@ def whats_missed_output():
   hashtag = request.args.get('hashtag')
   start_time = str(request.args.get('start_time'))
   start_time = datetime.datetime.strptime(start_time, '%Y-%m-%d-%H-%M')
-  duration = datetime.timedelta(hours = float(request.args.get('duration')))
+  duration = datetime.timedelta(minutes = float(request.args.get('duration')))
   end_time = start_time + duration
 
   # Feed inputs into main functions
