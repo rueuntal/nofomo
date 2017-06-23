@@ -109,7 +109,7 @@ def tweet_to_db(searchQuery, start, end, tweetsPerQry=100, maxTweets=100000000):
         except tweepy.TweepError as e:
             time.sleep(180)
             continue
-
+    print("Total number of tweets: %s", tweetCount)
 
 def tweets_db_to_pd(searchQuery, start, end):
     """
