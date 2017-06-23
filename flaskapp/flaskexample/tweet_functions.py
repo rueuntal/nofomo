@@ -73,7 +73,7 @@ def tweet_to_db(searchQuery, start, end, tweetsPerQry=100, maxTweets=100000000):
     cur.execute(create_table)
     con.commit()
 
-    cur.execute("SELECT tweet_id FROM tweets WHERE hashtag = '%s'", searchQuery)
+    cur.execute("SELECT tweet_id FROM tweets WHERE hashtag = %s", (searchQuery))
     if not cur.rowcount:
         unique_ids = set()
     else:
@@ -123,7 +123,7 @@ def tweets_db_to_pd(searchQuery, start, end):
 
     con = psycopg2.connect(host = host, dbname = dbname,user = rds_user, password = rds_pw, port = '5432')
 
-    tweets_pd = pd.read_sql_query(("SELECT id, tweet_id, datetime, content FROM tweets WHERE hashtag = '%s'", searchQuery), con)
+    tweets_pd = pd.read_sql_query(("SELECT id, tweet_id, datetime, content FROM tweets WHERE hashtag = %s", (searchQuery)), con)
     tweets_pd['datetime'] = tweets_pd['datetime'].apply(lambda y: datetime.datetime.strptime(y, '%Y-%m-%d %H:%M:%S'))
     tweets_pd_rows = [start <= tweets_pd['datetime'][i] <= end for i in range(len(tweets_pd))]
     tweets_pd = tweets_pd.loc[tweets_pd_rows, :]
