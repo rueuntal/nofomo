@@ -13,10 +13,9 @@ import re
 import textrank
 import time
 import matplotlib.dates as mdates
-import os
 
-def tweet_to_db(searchQuery, start, end, tweetsPerQry=100, maxTweets=100000000,
-                dbname=None):
+
+def tweet_to_db(searchQuery, start, end, tweetsPerQry=100, maxTweets=100000000):
     """
     This function pulls tweets with hashtag searchQuery from a specified time period.
     tweetsPerQry = 100 is the maximal number of tweets allowed by Twitter per query.
@@ -29,12 +28,21 @@ def tweet_to_db(searchQuery, start, end, tweetsPerQry=100, maxTweets=100000000,
     content - TEXT, tweet content
 
     """
+    # Obtain keys
+    with open('/home/ubuntu/twitter_oauth.txt') as oauth:
+        keys = oauth.readlines()
+    consumer_key, consumer_secret, access_token = [x.strip() for x in keys]
+
+    # Replace the API_KEY and API_SECRET with your application's key and secret.
+    auth = tweepy.AppAuthHandler(consumer_key, consumer_secret)
+
+    api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+
     startSince = start.strftime("%Y-%m-%d")
     endUntil = (end + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
 
     end_tweet = api.search(q=searchQuery, count=1, until=endUntil)[0]
     start_tweet = api.search(q=searchQuery, count=1, until=startSince)[0]
-    max_id, min_id = end_tweet.id, start_tweet.id
     tweetCount = 0
 
     # Identify ending id of tweets within timeframe using a binary search
@@ -51,33 +59,28 @@ def tweet_to_db(searchQuery, start, end, tweetsPerQry=100, maxTweets=100000000,
     max_id = end_tweet.id
 
     # Create db to store results
-    if dbname is None:
-        dbname = searchQuery.strip('#') + '_db'
-    username = 'xiaoxiao'
-    engine = create_engine('postgres://%s@localhost/%s' % (username, dbname))
+    with open('/home/ubuntu/rds_keys.txt') as rds_keys:
+        keys = rds_keys.readlines()
+    host, dbname, rds_user, rds_pw = [x.strip() for x in keys]
 
-    if not database_exists(engine.url):
-        create_database(engine.url)
-
-    con = psycopg2.connect(database=dbname, user=username)
+    con = psycopg2.connect(host = host, dbname = dbname, user = rds_user, password = rds_pw, port = '5432')
     cur = con.cursor()
-    cur.execute("SELECT * FROM information_schema.tables where table_name='tweets'")
-    if bool(cur.rowcount):  # If db already exists: resume from previous breaking point
-        cur.execute("SELECT tweet_id FROM tweets")
+
+    create_table = """
+    CREATE TABLE IF NOT EXISTS tweets (id SERIAL PRIMARY KEY, tweet_id BIGINT, hashtag TEXT, 
+    datetime TEXT, content TEXT);
+    """
+    cur.execute(create_table)
+    con.commit()
+
+    cur.execute("SELECT tweet_id FROM tweets WHERE hashtag = '%s'", searchQuery)
+    if not cur.rowcount:
+        unique_ids = set()
+    else:
         unique_ids = set([x[0] for x in cur.fetchall()])
 
-    else:
-        unique_ids = set()
-        create_table = """
-        CREATE TABLE IF NOT EXISTS tweets (id SERIAL PRIMARY KEY, tweet_id BIGINT, 
-        datetime TEXT, content TEXT);
-        """
-
-        cur.execute(create_table)
-        con.commit()
-
     insert_tweet = """
-    INSERT INTO tweets(tweet_id, datetime, content) VALUES (%s, %s, %s)
+    INSERT INTO tweets(tweet_id, hashtag, datetime, content) VALUES (%s, %s, %s, %s)
     """
 
     while tweetCount < maxTweets:
@@ -97,32 +100,30 @@ def tweet_to_db(searchQuery, start, end, tweetsPerQry=100, maxTweets=100000000,
                     unique_ids.add(tweet.id)
                     tweet_datetime = tweet.created_at
                     tweet_datetime_str = tweet_datetime.strftime('%Y-%m-%d %H:%M:%S')
-                    tweet_list_insert = [tweet.id, tweet_datetime_str,
+                    tweet_list_insert = [tweet.id, searchQuery, tweet_datetime_str,
                                          unicode(tweet.text).encode('ascii', 'replace')]
                     cur.execute(insert_tweet, tweet_list_insert)
                 con.commit()
             tweetCount += len(new_tweets)
-            print("Downloaded {0} tweets".format(tweetCount))
             max_id = new_tweets[-1].id
         except tweepy.TweepError as e:
-            print "Time out error caught."
             time.sleep(180)
             continue
 
-    print ("Downloaded {0} tweets in total.".format(tweetCount))
 
-def tweets_db_to_pd(dbname, start, end):
+def tweets_db_to_pd(searchQuery, start, end):
     """
     Query SQL databased and save result into a pd dataframe.
     start and end are needed because user may search same tag w/ different
     time frame.
     """
-    username = 'xiaoxiao'
-    con = psycopg2.connect(database = dbname, user = username)
-    sql_query = """
-    SELECT * FROM tweets;
-    """
-    tweets_pd = pd.read_sql_query(sql_query, con)
+    with open('/home/ubuntu/rds_keys.txt') as rds_keys:
+        keys = rds_keys.readlines()
+    host, dbname, rds_user, rds_pw = [x.strip() for x in keys]
+
+    con = psycopg2.connect(host = host, dbname = dbname,user = rds_user, password = rds_pw, port = '5432')
+
+    tweets_pd = pd.read_sql_query(("SELECT id, tweet_id, datetime, content FROM tweets WHERE hashtag = '%s'", searchQuery), con)
     tweets_pd['datetime'] = tweets_pd['datetime'].apply(lambda y: datetime.datetime.strptime(y, '%Y-%m-%d %H:%M:%S'))
     tweets_pd_rows = [start <= tweets_pd['datetime'][i] <= end for i in range(len(tweets_pd))]
     tweets_pd = tweets_pd.loc[tweets_pd_rows, :]
@@ -135,7 +136,6 @@ def group_tweets(tweet_pd, interval = datetime.timedelta(0, 1, 0)):
     time, number of tweets, all tweets within interval in a list
     """
     start_time = min(tweet_pd['datetime'])
-    end_time = max(tweet_pd['datetime'])
     tweet_pd['timegroup'] = np.floor((tweet_pd['datetime'] - start_time) / interval).astype(int)
     tweet_grouped = tweet_pd.groupby(['timegroup'])
     tweet_count = tweet_grouped['datetime'].aggregate(['count'])
@@ -212,13 +212,12 @@ def peakdet(v, delta):
 
 def get_peaks(tweet_count, delta=0.25):
     """
-    Returns a list of five sublists:
+    Returns a list of four sublists:
     peak_vals - number of tweets at peaks
     peak_time - timestamp of peaks
     peak_groups - indices of time intervals that belong to each peaks
     peak_tweets - list of lists, each sublist being a list of strings for tweets
         within one peak
-    nonpeak_tweets - tweets from tweet_count that do not belong to any of the peaks
     """
     sig = peakdet(tweet_count['count'], max(tweet_count['count']) * delta)
     peaks = sig[0]
@@ -242,7 +241,6 @@ def get_peaks(tweet_count, delta=0.25):
             j += 1
         peak_groups.append(single_group)
         peak_tweets.append(tweet_group)
-
     return [peak_vals, peak_time, peak_groups, peak_tweets]
 
 def clean_tweet(tweet_string, hashtag):
@@ -276,14 +274,13 @@ def overall_analysis(hashtag, start, end):
     """
     # First need to pull tweets into database
     tweet_to_db(hashtag, start, end)
-    dbname = hashtag.strip('#') + '_db'
-    tweet_pd = tweets_db_to_pd(dbname, start, end)
+    tweet_pd = tweets_db_to_pd(hashtag, start, end)
     tweet_count = group_tweets(tweet_pd)
     peak_vals, peak_time, peak_groups, peak_tweets = get_peaks(tweet_count)
     tweet_kw = textrank_analysis(peak_tweets, orig_tag = hashtag)
     return tweet_count, peak_time, peak_vals, tweet_kw
 
-def plot_timeline(peak_vals, tweet_kw, resolution = 1000):
+def plot_timeline(peak_vals, tweet_kw):
     """
     Plot timeline along with keywords.
     """
@@ -304,11 +301,11 @@ def plot_timeline(peak_vals, tweet_kw, resolution = 1000):
     plt.axis('tight')
 
     file_name = 'timeline.png'
-    plotfile = '/Users/xiaoxiao/Documents/GitHub/nofomo/flaskapp/flaskexample/static/' + file_name
+    plotfile = '/home/Ubuntu/nofomo/flaskapp/flaskexample/static/' + file_name
     plt.savefig(plotfile)
-    return '../static/' + file_name
+    return plotfile
 
-def plot_Ntweets(tweet_count, peak_time, peak_vals, resolution = 500):
+def plot_Ntweets(tweet_count, peak_time, peak_vals):
     """
     Plot the number of tweets through time.
     """
@@ -325,17 +322,7 @@ def plot_Ntweets(tweet_count, peak_time, peak_vals, resolution = 500):
 
     plt.scatter(peak_time, peak_vals, c = 'red')
     file_name = 'Ntweets.png'
-    plotfile = '/Users/xiaoxiao/Documents/GitHub/nofomo/flaskapp/flaskexample/static/' + file_name
+    plotfile = '/home/Ubuntu/nofomo/flaskapp/flaskexample/static/' + file_name
     plt.savefig(plotfile)
-    return '../static/' + file_name
-
-# Obtain keys
-with open('/home/ubuntu/twitter_oauth.txt') as oauth:
-    keys =  oauth.readlines()
-consumer_key, consumer_secret, access_token = [x.strip() for x in keys]
-
-# Replace the API_KEY and API_SECRET with your application's key and secret.
-auth = tweepy.AppAuthHandler(consumer_key, consumer_secret)
-
-api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+    return plotfile
 
