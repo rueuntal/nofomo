@@ -30,7 +30,7 @@ def whats_missed_output():
       return render_template("whats_missed_output.html", hashtag = hashtag, ntweet_plot = '../static/' + ntweet_file,
                              timeline_plot = '../static/' + timeline_file)
   else:
-      return render_template("whats_missed_input.html")
+      return render_template("whats_missed_delay.html")
   # start_time = datetime.datetime.strptime(start_time, '%Y-%m-%d-%H-%M')
   # duration = datetime.timedelta(minutes = float(request.args.get('duration')))
   # end_time = start_time + duration
