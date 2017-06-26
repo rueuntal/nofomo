@@ -82,6 +82,6 @@ def whats_missed_output():
       #run_analysis.apply_async([hashtag, start_time, duration], countdown = 10)
       @copy_current_request_context
       def foo():
-          print "success!"
+          print "success!" > test.txt
       gevent.spawn(foo)
       return render_template("whats_missed_delay.html")
