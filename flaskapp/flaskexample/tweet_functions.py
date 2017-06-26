@@ -271,6 +271,7 @@ def plot_timeline(peak_vals, tweet_kw, hashtag, start_time):
     """
     Plot timeline along with keywords.
     """
+    print "plot_timeline is being called."
     sns.set_style("white")
     mpl.rcParams['axes.linewidth'] = 0
     plt.figure()
@@ -296,6 +297,7 @@ def plot_Ntweets(tweet_count, peak_time, peak_vals, hashtag, start_time):
     """
     Plot the number of tweets through time.
     """
+    print "plot_Ntweets is being called."
     sns.set_style("darkgrid")
     plt.figure()
     plt.plot(tweet_count['time'], tweet_count['count'])
