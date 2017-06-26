@@ -12,6 +12,7 @@ import re
 import textrank
 import time
 import matplotlib.dates as mdates
+import os.path
 
 
 def tweet_to_db(searchQuery, start, end, tweetsPerQry=100, maxTweets=100000000):
@@ -286,7 +287,9 @@ def plot_timeline(peak_vals, tweet_kw, hashtag, start_time):
               length_includes_head=False, head_width=8, head_length=3.8)
     plt.axis('tight')
 
-    plotfile = '/static/timeline_' + hashtag.strip('#') + '_' + start_time + '.png'
+    app_root = os.path.dirname(os.path.abspath(__file__))
+    static_folder = os.path.join(app_root, 'static/uploads')
+    plotfile = os.path.join(static_folder, '/static/timeline_' + hashtag.strip('#') + '_' + start_time + '.png')
     plt.savefig(plotfile)
 
 def plot_Ntweets(tweet_count, peak_time, peak_vals, hashtag, start_time):
@@ -305,6 +308,8 @@ def plot_Ntweets(tweet_count, peak_time, peak_vals, hashtag, start_time):
               length_includes_head=False, head_width=4, head_length=0.01)
 
     plt.scatter(peak_time, peak_vals, c = 'red')
-    plotfile = '/static/Ntweets_' + hashtag.strip('#') + '_' + start_time + '.png'
+    app_root = os.path.dirname(os.path.abspath(__file__))
+    static_folder = os.path.join(app_root, 'static/uploads')
+    plotfile = os.path.join(static_folder, '/static/Ntweets_' + hashtag.strip('#') + '_' + start_time + '.png')
     plt.savefig(plotfile)
 
