@@ -74,5 +74,5 @@ def whats_missed_output():
                              timeline_plot = '../static/' + timeline_file)
   else:
       print "Enter else branch."
-      run_analysis.delay(hashtag, start_time, duration)
+      run_analysis.apply_async([hashtag, start_time, duration], countdown = 10)
       return render_template("whats_missed_delay.html")
