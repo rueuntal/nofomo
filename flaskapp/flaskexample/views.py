@@ -44,6 +44,10 @@ def run_analysis(hashtag, start_time, duration):
     tweet.plot_timeline(peak_vals, tweet_kw, hashtag, start_time)
     tweet.plot_Ntweets(tweet_count, peak_time, peak_vals, hashtag, start_time)
 
+@celery.task
+def foo():
+    print "success!"
+
 @app.route('/')
 @app.route('/index')
 def whats_missed_input():
@@ -74,5 +78,6 @@ def whats_missed_output():
                              timeline_plot = '../static/' + timeline_file)
   else:
       print "Enter else branch."
-      run_analysis.apply_async([hashtag, start_time, duration], countdown = 10)
+      #run_analysis.apply_async([hashtag, start_time, duration], countdown = 10)
+      foo()
       return render_template("whats_missed_delay.html")
