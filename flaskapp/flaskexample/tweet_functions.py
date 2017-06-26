@@ -280,7 +280,7 @@ def overall_analysis(hashtag, start, end):
     tweet_kw = textrank_analysis(peak_tweets, orig_tag = hashtag)
     return tweet_count, peak_time, peak_vals, tweet_kw
 
-def plot_timeline(peak_vals, tweet_kw):
+def plot_timeline(peak_vals, tweet_kw, hashtag, start_time):
     """
     Plot timeline along with keywords.
     """
@@ -300,12 +300,10 @@ def plot_timeline(peak_vals, tweet_kw):
               length_includes_head=False, head_width=8, head_length=3.8)
     plt.axis('tight')
 
-    file_name = 'timeline.png'
-    plotfile = '/home/ubuntu/nofomo/flaskapp/flaskexample/static/' + file_name
+    plotfile = '../static/timeline_' + hashtag.strip('#') + '_' + start_time + '.png'
     plt.savefig(plotfile)
-    return plotfile
 
-def plot_Ntweets(tweet_count, peak_time, peak_vals):
+def plot_Ntweets(tweet_count, peak_time, peak_vals, hashtag, start_time):
     """
     Plot the number of tweets through time.
     """
@@ -321,8 +319,6 @@ def plot_Ntweets(tweet_count, peak_time, peak_vals):
               length_includes_head=False, head_width=4, head_length=0.01)
 
     plt.scatter(peak_time, peak_vals, c = 'red')
-    file_name = 'Ntweets.png'
-    plotfile = '/home/ubuntu/nofomo/flaskapp/flaskexample/static/' + file_name
+    plotfile = '../static/Ntweets_' + hashtag.strip('#') + '_' + start_time + '.png'
     plt.savefig(plotfile)
-    return plotfile
 
