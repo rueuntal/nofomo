@@ -22,7 +22,7 @@ def run_analysis(hashtag, start_time, duration):
     end = start + duration
 
     # Feed inputs into tweet functions
-    tweet.tweet_to_db(hashtag, start, end)
+    #tweet.tweet_to_db(hashtag, start, end)
     tweet_pd = tweet.tweets_db_to_pd(hashtag, start, end)
     tweet_count = tweet.group_tweets(tweet_pd)
     # if max(tweet_count['count']) < 30: ...
