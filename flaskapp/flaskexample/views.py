@@ -1,5 +1,5 @@
 from flask import render_template, Flask, request
-from app import app
+from flaskexample import app
 import datetime
 import tweet_functions as tweet
 import os.path
