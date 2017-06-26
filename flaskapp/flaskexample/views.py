@@ -10,8 +10,8 @@ import sys
 with open('/home/ubuntu/nofomo/flaskapp/mq.txt') as oauth:
     keys = oauth.readlines()
 mqdir = keys[0].strip()
-app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-celery = Celery(app.name, broker = app.config['CELERY_BROKER_URL'])
+app.config['CELERY_BROKER_URL'] = mqdir
+celery = Celery(app.name, broker = mqdir)
 celery.conf.update(app.config)
 
 @celery.task
