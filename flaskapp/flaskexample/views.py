@@ -23,9 +23,9 @@ def whats_missed_output():
   # Pull the three pieces of inputs
   hashtag = request.args.get('hashtag')
   start_time = str(request.args.get('start_time'))
-  ntweet_plot_dir = '/home/Ubuntu/nofomo/flaskapp/flaskexample/static/' + 'Ntweets_' + \
+  ntweet_plot_dir = '/home/ubuntu/nofomo/flaskapp/flaskexample/static/' + 'Ntweets_' + \
                     hashtag.strip('#') + '_' + start_time + '.png'
-  timeline_plot_dir = '/home/Ubuntu/nofomo/flaskapp/flaskexample/static/' + 'timeline_' + \
+  timeline_plot_dir = '/home/ubuntu/nofomo/flaskapp/flaskexample/static/' + 'timeline_' + \
                     hashtag.strip('#') + '_' + start_time + '.png'
   if os.path.isfile(ntweet_plot_dir):
       return render_template("whats_missed_output.html", hashtag = hashtag, ntweet_plot = ntweet_plot_dir,
