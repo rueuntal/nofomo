@@ -30,6 +30,8 @@ def whats_missed_output():
   if os.path.isfile(ntweet_plot_dir):
       return render_template("whats_missed_output.html", hashtag = hashtag, ntweet_plot = ntweet_plot_dir,
                              timeline_plot = timeline_plot_dir)
+  else:
+      return render_template("whats_missed_input.html")
   # start_time = datetime.datetime.strptime(start_time, '%Y-%m-%d-%H-%M')
   # duration = datetime.timedelta(minutes = float(request.args.get('duration')))
   # end_time = start_time + duration
