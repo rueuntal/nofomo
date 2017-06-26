@@ -18,7 +18,7 @@ celery.conf.update(app.config)
 
 @celery.task
 def foo():
-    print "success!" > open('../test.txt')
+    print "success!" > open('../test.txt', 'a')
 
 @celery.task
 def run_analysis(hashtag, start_time, duration):
