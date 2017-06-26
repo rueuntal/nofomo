@@ -11,9 +11,9 @@ import sys
 with open('/home/ubuntu/nofomo/flaskapp/mq.txt') as oauth:
     keys = oauth.readlines()
 mqdir = keys[0].strip()
-redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:1111')
-app.config['CELERY_BROKER_URL'] = redis_url
-celery = Celery(app.name, broker = redis_url)
+redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379/0')
+app.config['CELERY_BROKER_URL'] = mqdir
+celery = Celery(app.name, broker = mqdir)
 celery.conf.update(app.config)
 
 @celery.task
