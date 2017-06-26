@@ -1,4 +1,4 @@
-from flask import render_template, Flask, request
+from flask import render_template, Flask, request, copy_current_request_context
 from flaskexample import app
 import datetime
 import tweet_functions as tweet
@@ -6,6 +6,7 @@ import os.path
 import os
 from celery import Celery
 import sys
+import gevent
 
 # Initialize Celery
 with open('/home/ubuntu/nofomo/flaskapp/mq.txt') as oauth:
@@ -48,10 +49,6 @@ def run_analysis(hashtag, start_time, duration):
     tweet.plot_timeline(peak_vals, tweet_kw, hashtag, start_time)
     tweet.plot_Ntweets(tweet_count, peak_time, peak_vals, hashtag, start_time)
 
-@celery.task
-def foo():
-    print "success!"
-
 @app.route('/')
 @app.route('/index')
 def whats_missed_input():
@@ -83,5 +80,8 @@ def whats_missed_output():
   else:
       print "Enter else branch."
       #run_analysis.apply_async([hashtag, start_time, duration], countdown = 10)
-      foo.delay()
+      @copy_current_request_context
+      def foo():
+          print "success!"
+      gevent.spawn(foo)
       return render_template("whats_missed_delay.html")
