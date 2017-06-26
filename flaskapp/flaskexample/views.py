@@ -19,7 +19,7 @@ def run_analysis(hashtag, start_time, duration):
     Saves result to static.
     """
     start = datetime.datetime.strptime(start_time, '%Y-%m-%d-%H-%M')
-    duration = datetime.timedelta(minutes = float(duration)
+    duration = datetime.timedelta(minutes = float(duration))
     end = start + duration
 
     # Feed inputs into tweet functions
