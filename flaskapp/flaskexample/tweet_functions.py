@@ -301,7 +301,7 @@ def plot_timeline(peak_vals, tweet_kw):
     plt.axis('tight')
 
     file_name = 'timeline.png'
-    plotfile = '/home/Ubuntu/nofomo/flaskapp/flaskexample/static/' + file_name
+    plotfile = '/home/ubuntu/nofomo/flaskapp/flaskexample/static/' + file_name
     plt.savefig(plotfile)
     return plotfile
 
@@ -322,7 +322,7 @@ def plot_Ntweets(tweet_count, peak_time, peak_vals):
 
     plt.scatter(peak_time, peak_vals, c = 'red')
     file_name = 'Ntweets.png'
-    plotfile = '/home/Ubuntu/nofomo/flaskapp/flaskexample/static/' + file_name
+    plotfile = '/home/ubuntu/nofomo/flaskapp/flaskexample/static/' + file_name
     plt.savefig(plotfile)
     return plotfile
 
