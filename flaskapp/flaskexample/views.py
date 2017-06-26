@@ -1,12 +1,11 @@
-from flask import render_template, Flask
-from flask import request
+from flask import render_template, Flask, request
+from flaskexample import app
 import datetime
 import tweet_functions as tweet
 import os.path
 from celery import Celery
 
 # Initialize Celery
-app = Flask(__name__)
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
 app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
 celery = Celery(app.name, broker = app.config['CELERY_BROKER_URL'])
@@ -32,8 +31,8 @@ def run_analysis(hashtag, start_time, duration):
     tweet.plot_timeline(peak_vals, tweet_kw, hashtag, start_time)
     tweet.plot_Ntweets(tweet_count, peak_time, peak_vals, hashtag, start_time)
 
-
 @app.route('/')
+@app.route('/index')
 def whats_missed_input():
     return render_template("whats_missed_input.html")
 
