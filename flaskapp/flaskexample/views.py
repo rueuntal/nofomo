@@ -6,7 +6,6 @@ import os.path
 import os
 from celery import Celery
 import sys
-import gevent
 
 # Initialize Celery
 with open('/home/ubuntu/nofomo/flaskapp/mq.txt') as oauth:
@@ -16,6 +15,10 @@ redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
 app.config['CELERY_BROKER_URL'] = redis_url
 celery = Celery(app.name, broker = redis_url)
 celery.conf.update(app.config)
+
+@celery.task
+def foo():
+    print "success!" > open('/home/ubuntu/nofomo/flaskapp/test.txt')
 
 @celery.task
 def run_analysis(hashtag, start_time, duration):
@@ -80,8 +83,5 @@ def whats_missed_output():
   else:
       print "Enter else branch."
       #run_analysis.apply_async([hashtag, start_time, duration], countdown = 10)
-      @copy_current_request_context
-      def foo():
-          print "success!" > test.txt
-      gevent.spawn(foo)
+      foo()
       return render_template("whats_missed_delay.html")
