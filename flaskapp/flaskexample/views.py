@@ -60,5 +60,5 @@ def whats_missed_output():
       return render_template("whats_missed_output.html", hashtag = hashtag, ntweet_plot = '../static/' + ntweet_file,
                              timeline_plot = '../static/' + timeline_file)
   else:
-      run_analysis(hashtag, start_time, duration)
+      run_analysis.delay(hashtag, start_time, duration)
       return render_template("whats_missed_delay.html")
