@@ -34,7 +34,6 @@ def run_analysis(hashtag, start_time, duration):
 
 
 @app.route('/')
-@app.route('/index')
 def whats_missed_input():
     return render_template("whats_missed_input.html")
 
