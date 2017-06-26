@@ -308,6 +308,6 @@ def plot_Ntweets(tweet_count, peak_time, peak_vals, hashtag, start_time):
               length_includes_head=False, head_width=4, head_length=0.01)
 
     plt.scatter(peak_time, peak_vals, c = 'red')
-    plotfile = '../static/Ntweets_' + hashtag.strip('#') + '_' + start_time + '.png'
+    plotfile = 'flaskexample/static/Ntweets_' + hashtag.strip('#') + '_' + start_time + '.png'
     plt.savefig(plotfile)
 
