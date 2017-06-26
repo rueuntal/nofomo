@@ -7,7 +7,10 @@ from celery import Celery
 import sys
 
 # Initialize Celery
-app.config['CELERY_BROKER_URL'] = 'amqp://guest:guest@ec2-13-59-134-69.us-east-2.compute.amazonaws.com:5672//'
+with open('/home/ubuntu/nofomo/flaskapp/mq.txt') as oauth:
+    keys = oauth.readlines()
+mqdir = keys[0].strip()
+app.config['CELERY_BROKER_URL'] = mqdir
 celery = Celery(app.name, broker = app.config['CELERY_BROKER_URL'])
 celery.conf.update(app.config)
 
