@@ -3,6 +3,7 @@ from flaskexample import app
 import datetime
 import tweet_functions as tweet
 import os.path
+import os
 from celery import Celery
 import sys
 
@@ -10,8 +11,9 @@ import sys
 with open('/home/ubuntu/nofomo/flaskapp/mq.txt') as oauth:
     keys = oauth.readlines()
 mqdir = keys[0].strip()
-app.config['CELERY_BROKER_URL'] = mqdir
-celery = Celery(app.name, broker = mqdir)
+redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
+app.config['CELERY_BROKER_URL'] = redis_url
+celery = Celery(app.name, broker = redis_url)
 celery.conf.update(app.config)
 
 @celery.task
