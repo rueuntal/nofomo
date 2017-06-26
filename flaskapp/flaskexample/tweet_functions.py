@@ -286,7 +286,7 @@ def plot_timeline(peak_vals, tweet_kw, hashtag, start_time):
               length_includes_head=False, head_width=8, head_length=3.8)
     plt.axis('tight')
 
-    plotfile = '/home/ubuntu/nofomo/flaskapp/flaskexample/static/timeline_' + hashtag.strip('#') + '_' + start_time + '.png'
+    plotfile = '../static/timeline_' + hashtag.strip('#') + '_' + start_time + '.png'
     plt.savefig(plotfile)
 
 def plot_Ntweets(tweet_count, peak_time, peak_vals, hashtag, start_time):
@@ -305,6 +305,6 @@ def plot_Ntweets(tweet_count, peak_time, peak_vals, hashtag, start_time):
               length_includes_head=False, head_width=4, head_length=0.01)
 
     plt.scatter(peak_time, peak_vals, c = 'red')
-    plotfile = '/home/ubuntu/nofomo/flaskapp/flaskexample/static/Ntweets_' + hashtag.strip('#') + '_' + start_time + '.png'
+    plotfile = '../static/Ntweets_' + hashtag.strip('#') + '_' + start_time + '.png'
     plt.savefig(plotfile)
 
