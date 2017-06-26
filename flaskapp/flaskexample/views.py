@@ -27,7 +27,7 @@ def run_analysis(hashtag, start_time, duration):
     tweet_count = tweet.group_tweets(tweet_pd)
     # if max(tweet_count['count']) < 30: ...
     peak_vals, peak_time, peak_groups, peak_tweets = tweet.get_peaks(tweet_count)
-    tweet_kw = textrank_analysis(peak_tweets, orig_tag=hashtag)
+    tweet_kw = tweet.textrank_analysis(peak_tweets, orig_tag=hashtag)
     tweet.plot_timeline(peak_vals, tweet_kw, hashtag, start_time)
     tweet.plot_Ntweets(tweet_count, peak_time, peak_vals, hashtag, start_time)
 
