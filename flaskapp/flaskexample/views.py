@@ -4,6 +4,7 @@ import datetime
 import tweet_functions as tweet
 import os.path
 from celery import Celery
+import sys
 
 # Initialize Celery
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
@@ -18,6 +19,7 @@ def run_analysis(hashtag, start_time, duration):
     Saves result to static.
     """
     print "Enter run_analysis function."
+    sys.stdout.flush()
     start = datetime.datetime.strptime(start_time, '%Y-%m-%d-%H-%M')
     duration = datetime.timedelta(minutes = float(duration))
     end = start + duration
@@ -25,15 +27,20 @@ def run_analysis(hashtag, start_time, duration):
     # Feed inputs into tweet functions
     #tweet.tweet_to_db(hashtag, start, end)
     print "Pull tweets from db"
+    sys.stdout.flush()
     tweet_pd = tweet.tweets_db_to_pd(hashtag, start, end)
     print "count tweets"
+    sys.stdout.flush()
     tweet_count = tweet.group_tweets(tweet_pd)
     # if max(tweet_count['count']) < 30: ...
     print "get peaks"
+    sys.stdout.flush()
     peak_vals, peak_time, peak_groups, peak_tweets = tweet.get_peaks(tweet_count)
     print "get keywords"
+    sys.stdout.flush()
     tweet_kw = tweet.textrank_analysis(peak_tweets, orig_tag=hashtag)
     print "try to plot"
+    sys.stdout.flush()
     tweet.plot_timeline(peak_vals, tweet_kw, hashtag, start_time)
     tweet.plot_Ntweets(tweet_count, peak_time, peak_vals, hashtag, start_time)
 
