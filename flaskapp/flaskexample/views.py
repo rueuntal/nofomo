@@ -12,11 +12,14 @@ def whats_missed_input():
 
 @app.route('/example_comeyday')
 def whats_missed_comey():
-    return render_template("whats_missed_comeyday.html")
+    return render_template("whats_missed_output.html", hashtag=hashtag, ntweet_plot='../static/Ntweets_comeyday_2017-06-08-14-00.png',
+                           timeline_plot='../static/timeline_comeyday_2017-06-08-14-00.png')
 
-@app.route('/example_NBAFinals')
+
+@app.route('/example_NBAFinals_2')
 def whats_missed_nbafinals():
-    return render_template("whats_missed_NBAFinals.html")
+    return render_template("whats_missed_output.html", hashtag=hashtag, ntweet_plot='../static/Ntweets_NBAFinals_2017-06-13-01-00.png',
+                           timeline_plot='../static/timeline_NBAFinals_2017-06-13-01-00.png')
 
 @app.route('/output')
 def whats_missed_output():
