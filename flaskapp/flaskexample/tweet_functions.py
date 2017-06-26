@@ -2,13 +2,12 @@ from __future__ import division
 import tweepy
 import numpy as np
 import pandas as pd
-from sqlalchemy import create_engine
-from sqlalchemy_utils import database_exists, create_database
 import psycopg2
 import datetime
-import seaborn as sns
-import matplotlib.pyplot as plt
 import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as plt
+import seaborn as sns
 import re
 import textrank
 import time
