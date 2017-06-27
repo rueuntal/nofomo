@@ -1,6 +1,4 @@
 from flask import render_template, Flask, request, copy_current_request_context
-from flaskexample import app
-from flask.ext.rq import job
 import datetime
 import tweet_functions as tweet
 import os.path
@@ -8,6 +6,7 @@ import os
 from celery import Celery
 import sys
 
+app = Flask(__name__)
 # Initialize Celery
 with open('/home/ubuntu/nofomo/flaskapp/mq.txt') as oauth:
     keys = oauth.readlines()
