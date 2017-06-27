@@ -16,24 +16,20 @@ def run_analysis(hashtag, start_time, duration):
     Carry out analysis for user inputs.
     Saves result to static.
     """
-    print "Enter run_analysis function."
     start = datetime.datetime.strptime(start_time, '%Y-%m-%d-%H-%M')
     duration = datetime.timedelta(minutes = float(duration))
     end = start + duration
 
     # Feed inputs into tweet functions
-    print "Pull tweets from db"
     tweet_pd = tweet.tweets_db_to_pd(hashtag, start, end)
-    print "count tweets"
     tweet_count = tweet.group_tweets(tweet_pd)
     # if max(tweet_count['count']) < 30: ...
-    print "get peaks"
     peak_vals, peak_time, peak_groups, peak_tweets = tweet.get_peaks(tweet_count)
-    print "get keywords"
     tweet_kw = tweet.textrank_analysis(peak_tweets, orig_tag=hashtag)
     print "try to plot"
-    tweet.plot_timeline(peak_vals, tweet_kw, hashtag, start_time)
     tweet.plot_Ntweets(tweet_count, peak_time, peak_vals, hashtag, start_time)
+    tweet.plot_timeline(peak_vals, tweet_kw, hashtag, start_time)
+
 
 @app.route('/')
 @app.route('/index')
@@ -64,7 +60,5 @@ def whats_missed_output():
       return render_template("whats_missed_output.html", hashtag = hashtag, ntweet_plot = '../static/' + ntweet_file,
                              timeline_plot = '../static/' + timeline_file)
   else:
-      print "Enter else branch."
-      #run_analysis.apply_async([hashtag, start_time, duration], countdown = 10)
       executor.submit(run_analysis, hashtag, start_time, duration)
       return render_template("whats_missed_delay.html")
