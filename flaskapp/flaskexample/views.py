@@ -17,7 +17,7 @@ app.config['CELERY_BROKER_URL'] = redis_url
 celery = Celery(app.name, broker = redis_url)
 celery.conf.update(app.config)
 
-@job
+@celery.task
 def foo():
     print "success!" > open('../test.txt', 'a')
 
