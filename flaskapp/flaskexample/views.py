@@ -4,23 +4,9 @@ import datetime
 import tweet_functions as tweet
 import os.path
 import os
-from celery import Celery
 import sys
+import subprocess
 
-# Initialize Celery
-with open('/home/ubuntu/nofomo/flaskapp/mq.txt') as oauth:
-    keys = oauth.readlines()
-mqdir = keys[0].strip()
-redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379/0')
-app.config['CELERY_BROKER_URL'] = redis_url
-celery = Celery(app.name, broker = redis_url)
-celery.conf.update(app.config)
-
-@celery.task
-def foo():
-    print "success!" > open('../test.txt', 'a')
-
-@celery.task
 def run_analysis(hashtag, start_time, duration):
     """
     Carry out analysis for user inputs.
@@ -83,5 +69,5 @@ def whats_missed_output():
   else:
       print "Enter else branch."
       #run_analysis.apply_async([hashtag, start_time, duration], countdown = 10)
-      foo.delay()
+      subprocess.Popen("python tasks.py")
       return render_template("whats_missed_delay.html")
