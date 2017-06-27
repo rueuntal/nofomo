@@ -1,5 +1,6 @@
 from flask import render_template, Flask, request, copy_current_request_context
 from flaskexample import app
+from flask.ext.rq import job
 import datetime
 import tweet_functions as tweet
 import os.path
@@ -16,7 +17,7 @@ app.config['CELERY_BROKER_URL'] = redis_url
 celery = Celery(app.name, broker = redis_url)
 celery.conf.update(app.config)
 
-@celery.task
+@job
 def foo():
     print "success!" > open('../test.txt', 'a')
 
