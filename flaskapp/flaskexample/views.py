@@ -1,6 +1,5 @@
 from flask import render_template, Flask, request, copy_current_request_context
 from flaskexample import app
-from flask.ext.rq import job
 import datetime
 import tweet_functions as tweet
 import os.path
