@@ -12,7 +12,6 @@ import re
 import textrank
 import time
 import matplotlib.dates as mdates
-import os.path
 import matplotlib as mpl
 mpl.rcParams['font.family'] = 'Arial'
 
@@ -297,22 +296,17 @@ def plot_Ntweets(tweet_count, peak_time, peak_vals, hashtag, start_time):
     """
     Plot the number of tweets through time.
     """
-    print "plot_Ntweets is being called."
     sns.set_style("darkgrid")
     plt.figure()
-    print "plt.plot"
     plt.plot(tweet_count['time'], tweet_count['count'])
     plt.xlabel('Time', fontsize=16)
     plt.ylabel('Tweets per minute', fontsize=16)
     plt.tick_params(axis='both', labelsize=12)
-    print "plt.date2num"
     x0 = mdates.date2num(min(tweet_count['time']))
     x1 = mdates.date2num(max(tweet_count['time']))
     plt.arrow(x0, 0, x1 - x0, 0, shape='full', lw=2, color='black',
               length_includes_head=False, head_width=4, head_length=0.01)
-    print "plt.scatter"
     plt.scatter(peak_time, peak_vals, c = 'red')
     plotfile = 'flaskexample/static/Ntweets_' + hashtag.strip('#') + '_' + start_time + '.png'
-    print "plt.savefile"
     plt.savefig(plotfile)
 
