@@ -13,6 +13,8 @@ import textrank
 import time
 import matplotlib.dates as mdates
 import os.path
+import matplotlib as mpl
+mpl.rcParams['font.family'] = 'Arial'
 
 
 def tweet_to_db(searchQuery, start, end, tweetsPerQry=100, maxTweets=100000000):
