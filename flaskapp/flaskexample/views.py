@@ -69,5 +69,5 @@ def whats_missed_output():
   else:
       print "Enter else branch."
       #run_analysis.apply_async([hashtag, start_time, duration], countdown = 10)
-      subprocess.Popen("python /home/ubuntu/nofomo/flaskapp/flaskexample/tasks.py")
+      subprocess.Popen("python flaskexample/tasks.py")
       return render_template("whats_missed_delay.html")
