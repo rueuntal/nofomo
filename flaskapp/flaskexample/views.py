@@ -4,8 +4,12 @@ import datetime
 import tweet_functions as tweet
 import os.path
 import os
-import sys
-import subprocess
+from concurrent.futures import ThreadPoolExecutor
+
+executor = ThreadPoolExecutor(1)
+
+def foo():
+    print "success threadpoolexecutor!" > open('../test.txt', 'a')
 
 def run_analysis(hashtag, start_time, duration):
     """
@@ -69,5 +73,5 @@ def whats_missed_output():
   else:
       print "Enter else branch."
       #run_analysis.apply_async([hashtag, start_time, duration], countdown = 10)
-      subprocess.Popen("python flaskexample/tasks.py")
+      executor.submit(foo)
       return render_template("whats_missed_delay.html")
