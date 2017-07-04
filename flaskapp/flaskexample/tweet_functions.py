@@ -313,5 +313,5 @@ def plot_Ntweets(tweet_count, peak_time, peak_vals, hashtag, start_time):
 def warning_func(hashtag, start_time):
     "If max(tweet_count) or mean(tweet_count) do not reach threshold, record input to file."
     warning_file = open('flaskexample/static/warning_cases.txt', 'a')
-    print warning_file, hashtag.strip('#') + '\t' + start_time
+    print >> warning_file, hashtag.strip('#') + '\t' + start_time
     warning_file.close()
