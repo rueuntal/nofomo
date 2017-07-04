@@ -5,11 +5,9 @@ import tweet_functions as tweet
 import os.path
 import os
 from concurrent.futures import ThreadPoolExecutor
+import numpy as np
 
 executor = ThreadPoolExecutor(1)
-
-def foo():
-    print "success threadpoolexecutor!" > open('../test.txt', 'a')
 
 def run_analysis(hashtag, start_time, duration):
     """
@@ -24,11 +22,14 @@ def run_analysis(hashtag, start_time, duration):
     tweet.tweet_to_db(hashtag, start, end)
     tweet_pd = tweet.tweets_db_to_pd(hashtag, start, end)
     tweet_count = tweet.group_tweets(tweet_pd)
-    # if max(tweet_count['count']) < 30: ...
-    peak_vals, peak_time, peak_groups, peak_tweets = tweet.get_peaks(tweet_count)
-    tweet_kw = tweet.textrank_analysis(peak_tweets, orig_tag=hashtag)
-    tweet.plot_Ntweets(tweet_count, peak_time, peak_vals, hashtag, start_time)
-    tweet.plot_timeline(peak_vals, tweet_kw, hashtag, start_time)
+    # If too few tweets, return warning to uesr
+    if max(tweet_count['count']) < 30 or np.mean(tweet_count['count']) < 10:
+        tweet.warning_func(hashtag, start_time)
+    else:
+        peak_vals, peak_time, peak_groups, peak_tweets = tweet.get_peaks(tweet_count)
+        tweet_kw = tweet.textrank_analysis(peak_tweets, orig_tag=hashtag)
+        tweet.plot_Ntweets(tweet_count, peak_time, peak_vals, hashtag, start_time)
+        tweet.plot_timeline(peak_vals, tweet_kw, hashtag, start_time)
 
 
 @app.route('/')
@@ -60,5 +61,9 @@ def whats_missed_output():
       return render_template("whats_missed_output.html", hashtag = hashtag, ntweet_plot = '../static/' + ntweet_file,
                              timeline_plot = '../static/' + timeline_file)
   else:
+      warning_cases = np.genfromtxt('flaskexample/static/warning_cases.txt', dtype = 'str', delimiter = '\t')
+      for row in warning_cases:
+          if row[0] == hashtag.strip('#') and row[1] == start_time:
+              return render_template("whats_missed_warning.html")
       executor.submit(run_analysis, hashtag, start_time, duration)
       return render_template("whats_missed_delay.html")
