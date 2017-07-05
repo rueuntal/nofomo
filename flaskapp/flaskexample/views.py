@@ -24,7 +24,10 @@ def run_analysis(hashtag, start_time, duration):
     tweet_count = tweet.group_tweets(tweet_pd)
     # If too few tweets, return warning to uesr
     if max(tweet_count['count']) < 30 or np.mean(tweet_count['count']) < 10:
-        tweet.warning_func(hashtag, start_time)
+        print 'Enter warning branch'
+        warning_file = open('flaskexample/static/warning_cases.txt', 'a')
+        print >> warning_file, hashtag.strip('#') + '\t' + start_time
+        warning_file.close()
     else:
         peak_vals, peak_time, peak_groups, peak_tweets = tweet.get_peaks(tweet_count)
         tweet_kw = tweet.textrank_analysis(peak_tweets, orig_tag=hashtag)
