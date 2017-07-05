@@ -5,7 +5,6 @@ import tweet_functions as tweet
 import os.path
 import os
 from concurrent.futures import ThreadPoolExecutor
-import numpy as np
 
 executor = ThreadPoolExecutor(1)
 
@@ -64,9 +63,11 @@ def whats_missed_output():
       return render_template("whats_missed_output.html", hashtag = hashtag, ntweet_plot = '../static/' + ntweet_file,
                              timeline_plot = '../static/' + timeline_file)
   else:
-      warning_cases = np.genfromtxt('flaskexample/static/warning_cases.txt', dtype = 'str', delimiter = '\t')
-      for row in warning_cases:
-          if row[0] == hashtag.strip('#') and row[1] == start_time:
-              return render_template("whats_missed_warning.html")
+      warning_cases_dir = 'flaskexample/static/warning_cases.txt'
+      with open(warning_cases_dir) as f:
+          for line in f:
+              hash, time = line.strip().split('\t')
+              if hash == hashtag.strip('#') and time == start_time:
+                  return render_template("whats_missed_warning.html")
       executor.submit(run_analysis, hashtag, start_time, duration)
       return render_template("whats_missed_delay.html")
